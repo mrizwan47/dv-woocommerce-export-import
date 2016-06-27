@@ -1,2 +1,2 @@
-# dv-woocommerce-export-import
-WordPress plugin to import/export woocommerce data
+# DV Woocommerce Export/Import
+A WordPress plugin to import and export woocommerce data to/from excel file.
