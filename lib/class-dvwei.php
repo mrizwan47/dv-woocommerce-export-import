@@ -42,17 +42,15 @@ class DVWEI{
 
 	}
 
-	/**
-	 * Export Basic Product Data
-	 */
-	function export_basic_products(){
+	function clean_export(){
 
 		$this->prepare_basic_products();
+		$this->prepare_category_data();
+
+		// TODO Keep adding additional *prepare* functions for more sheets
 		$this->save_excel();
-		wp_die();
 
 	}
-
 	/**
 	 * Prepare Basic Product Data
 	 */
@@ -166,7 +164,52 @@ class DVWEI{
 		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
 
 	}
-	 
+
+	/**
+	 * Preparing category data
+	 */
+	function prepare_category_data(){
+
+		$categories = get_terms( array(
+		    'taxonomy'		=> 'product_cat',
+		    'hide_empty'	=> false,
+		));
+
+		$data	=	array();
+
+		// Headers
+		$data[]		=	array(
+			'category_id',
+			'name',
+			'slug',
+			'parent_id',
+			'description',
+			'display_type',
+			'thumbnail'
+		);
+
+		foreach( $categories as $cat ){
+
+			$data[]		=	array(
+				'category_id'		=> $cat->term_id,
+				'name'					=> $cat->name,
+				'slug'					=> $cat->slug,
+				'parent_id'			=> $cat->parent,
+				'description'		=> $cat->description,
+				'display_type'	=> get_term_meta('display_type', $cat->term_id, true),
+				'thumbnail'			=> wp_get_attachment_url( get_term_meta('thumbnail_id', $cat->term_id, true) )
+			);
+
+		}
+
+		$this->dvphpexcel->createSheet(1);
+		$this->dvphpexcel->setActiveSheetIndex(1);
+		$this->dvphpexcel->getActiveSheet()->setTitle("categories");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
+
 
 	/**
 	 * Save excel

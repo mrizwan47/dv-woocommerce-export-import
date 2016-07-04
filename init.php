@@ -37,7 +37,7 @@ function dvwei_export_products(){
 	if( $_GET['dvwooei_action'] == 'export'  ){
 
 		$export		=	new DVWEI;
-		$export->export_basic_products();
+		$export->clean_export();
 
 	}
 
