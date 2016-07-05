@@ -46,6 +46,7 @@ class DVWEI{
 
 		$this->prepare_basic_products();
 		$this->prepare_category_data();
+		$this->prepare_tags_data();
 
 		// TODO Keep adding additional *prepare* functions for more sheets
 		$this->save_excel();
@@ -205,6 +206,45 @@ class DVWEI{
 		$this->dvphpexcel->createSheet(1);
 		$this->dvphpexcel->setActiveSheetIndex(1);
 		$this->dvphpexcel->getActiveSheet()->setTitle("categories");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
+
+	/**
+	 * Preparing tags data
+	 */
+	function prepare_tags_data(){
+
+		$tags = get_terms( array(
+		    'taxonomy'		=> 'product_tag',
+		    'hide_empty'	=> false,
+		));
+
+		$data	=	array();
+
+		// Headers
+		$data[]		=	array(
+			'tag_id',
+			'name',
+			'slug',
+			'description'
+		);
+
+		foreach( $tags as $tag ){
+
+			$data[]		=	array(
+				'tag_id'			=> $tag->term_id,
+				'name'				=> $tag->name,
+				'slug'				=> $tag->slug,
+				'description'	=> $tag->description
+			);
+
+		}
+
+		$this->dvphpexcel->createSheet(2);
+		$this->dvphpexcel->setActiveSheetIndex(2);
+		$this->dvphpexcel->getActiveSheet()->setTitle("tags");
 		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
 		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
 
