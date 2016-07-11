@@ -47,6 +47,8 @@ class DVWEI{
 		$this->prepare_basic_products();
 		$this->prepare_category_data();
 		$this->prepare_tags_data();
+		$this->prepare_pa_tax();
+		$this->prepare_pa_terms();
 
 		// TODO Keep adding additional *prepare* functions for more sheets
 		$this->save_excel();
@@ -249,6 +251,97 @@ class DVWEI{
 		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
 
 	}
+
+	/**
+	 * Prepare Products Attributes Taxonomies
+	 */
+	function prepare_pa_tax(){
+
+		$pa_taxes		= wc_get_attribute_taxonomies();
+
+		$data	=	array();
+
+		// Headers
+		$data[]		=	array(
+			'attribute_id',
+			'attribute_name',
+			'attribute_label',
+			'attribute_orderby',
+			'attribute_public'
+		);
+
+		foreach( $pa_taxes as $pa_tax ){
+
+			$data[]		=	array(
+				'attribute_id'			=>	$pa_tax->attribute_id,
+				'attribute_name'		=>	$pa_tax->attribute_name,
+				'attribute_label'		=>	$pa_tax->attribute_label,
+				'attribute_orderby'	=>	$pa_tax->attribute_orderby,
+				'attribute_public'	=>	$pa_tax->attribute_public
+			);
+
+		}
+
+		$this->dvphpexcel->createSheet(3);
+		$this->dvphpexcel->setActiveSheetIndex(3);
+		$this->dvphpexcel->getActiveSheet()->setTitle("attributes");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
+
+
+	/**
+	 * Prepare Products Attributes Terms
+	 */
+	function prepare_pa_terms(){
+
+		$pa_taxes		= wc_get_attribute_taxonomies();
+
+		$data	=	array();
+
+		// Headers
+		$data[]		=	array(
+			'attribute_name',
+			'term_id',
+			'term_name',
+			'term_slug',
+			'term_parent',
+			'term_description'
+		);
+
+		foreach( $pa_taxes as $pa_tax ){
+
+			$taxonomy_name		=	'pa_'.$pa_tax->attribute_name;
+
+			$terms = get_terms( array(
+				'taxonomy'		=> $taxonomy_name,
+				'hide_empty'	=> false,
+			));
+
+			foreach( $terms as $term ){
+
+				$data[]		=	array(
+					'attribute_name'		=>	$taxonomy_name,
+					'term_id'						=>	$term->term_id,
+					'term_name'					=>	$term->name,
+					'term_slug'					=>	$term->slug,
+					'term_parent'				=>	$term->parent,
+					'term_description'	=>	$term->description
+				);
+
+			}
+
+		}
+
+		$this->dvphpexcel->createSheet(4);
+		$this->dvphpexcel->setActiveSheetIndex(4);
+		$this->dvphpexcel->getActiveSheet()->setTitle("attributes_terms");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
+
 
 
 	/**
