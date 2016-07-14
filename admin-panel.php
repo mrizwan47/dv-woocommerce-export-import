@@ -1,4 +1,6 @@
 <?php
+// TODO Use Setting API
+
 // create custom plugin settings menu
 add_action('admin_menu', 'dvwei_admin_Page');
 function dvwei_admin_Page() {
@@ -11,11 +13,13 @@ function dvwei_settings_page_output() { ?>
 
 		<h2><?php echo WPWEI_NAME; ?></h2>
 
+		<?php settings_errors(); ?>
+
 		<div class="wrap">
 
 			<div class="admin_contents" id="dvwooexportimport">
 
-				<form method="post" action="options.php" id="dvwooexportimport_form">
+				<form method="post" action="options.php?page=<?php echo WPWEI_FILE; ?>" id="dvwooexportimport_form" enctype="multipart/form-data">
 
 					<h3>Export Data</h3>
 					<a href="admin.php?page=<?php echo WPWEI_FILE ?>&dvwooei_action=export" class="button">Export Data</a>

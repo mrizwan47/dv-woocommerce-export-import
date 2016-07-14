@@ -25,9 +25,8 @@ class DVWEI_Export{
 	private $dvphpexcel;
 
 	/**
-	 * __construct to import or export data
-	 *
-	*/
+	 * __construct to export data
+	 */
 	function __construct( $args=array() ){
 
 		$args = wp_parse_args( $args, array(
@@ -35,7 +34,14 @@ class DVWEI_Export{
 			'posts_per_page'	=> -1
 		));
 
-		$args		=	apply_filters( 'dvwei_query_args', $args );
+		/**
+     * Filter the default args of the export query
+     *
+     * @since 1.0
+     *
+     * @param array $args
+     */
+		$args		=	apply_filters( 'dvwei_export_query_args', $args );
 
 		$this->WPQ_Object		=	new WP_Query( $args );
 		$this->dvphpexcel		=	new PHPExcel();

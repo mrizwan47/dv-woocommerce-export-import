@@ -30,6 +30,7 @@ if( !class_exists('PHPExcel') )
 	require_once( WPWEI_ROOT_PATH. "phpexcel/PHPExcel.php" );
 
 require_once( WPWEI_ROOT_PATH. "lib/class-dvwei-export.php" );
+require_once( WPWEI_ROOT_PATH. "lib/class-dvwei-import.php" );
 require_once( WPWEI_ROOT_PATH. "admin-panel.php" );
 
 function dvwei_export_products(){
@@ -41,5 +42,27 @@ function dvwei_export_products(){
 
 	}
 
+	if( $_FILES['imported_file']['type'] == 'application/vnd.ms-excel' && $_FILES['imported_file']['error'] === 0 ){
+
+		if( !function_exists('wp_handle_upload') ){
+		  require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}
+
+		$uploadedfile			= $_FILES['imported_file'];
+		$upload_overrides	= array( 'test_form' => false );
+		$movefile					= wp_handle_upload( $uploadedfile, $upload_overrides );
+
+		if( $movefile && ! isset($movefile['error']) ){
+
+			$import		=	new DVWEI_Import( $movefile['file'] );
+			$import->import();
+
+		}else{
+			add_settings_error( 'dvweei_upload_error', esc_attr( 'settings_updated' ), $movefile['error'], 'error' );
+		}
+
+	}
+
 }
+
 add_action( 'admin_init', 'dvwei_export_products' );
