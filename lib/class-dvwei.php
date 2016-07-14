@@ -50,6 +50,7 @@ class DVWEI{
 		$this->prepare_pa_tax();
 		$this->prepare_pa_terms();
 		$this->prepare_attributes();
+		$this->prepare_variations();
 
 		// TODO Keep adding additional *prepare* functions for more sheets
 		$this->save_excel();
@@ -363,8 +364,8 @@ class DVWEI{
 
 			global $product;
 
-			if( !$product->is_type( 'variable' ) )
-				continue;
+			//if( !$product->is_type( 'variable' ) )
+				//continue;
 
 			foreach( $pa_taxes as $pa_tax ){
 
@@ -397,6 +398,100 @@ class DVWEI{
 
 	}
 
+
+	/**
+	 * Prepare Variations
+	 */
+	function prepare_variations(){
+
+		// Headers
+		$data	=	array();
+		$data[]		=	array(
+			'product_id',
+			'variation_id',
+      'variation_is_visible',
+      'variation_is_active',
+      'is_purchasable',
+      'display_price',
+      'display_regular_price',
+      'attributes',
+      'image_src',
+      'image_link',
+      'image_title',
+      'image_alt',
+      'image_caption',
+      'image_srcset',
+      'image_sizes',
+      'price_html',
+      'availability_html',
+      'sku',
+      'weight',
+      'dimensions',
+      'min_qty',
+      'max_qty',
+      'backorders_allowed',
+      'is_in_stock',
+      'is_downloadable',
+      'is_virtual',
+      'is_sold_individually',
+      'variation_description'
+		);
+
+		while ( $this->WPQ_Object->have_posts() ) : $this->WPQ_Object->the_post();
+
+			global $product;
+
+			// Filter variable products only
+			if( !$product->is_type( 'variable' ) )
+				continue;
+
+			foreach ( $product->get_children() as $child_id ) {
+
+				$vars				= $product->get_child( $child_id );
+		    $variation	= $product->get_available_variation( $vars );
+
+				$data[]		=	array(
+					'product_id'							=>	$product->id,
+					'variation_id'						=>	$variation['variation_id'],
+		      'variation_is_visible'		=>	$variation['variation_is_visible'],
+		      'variation_is_active'			=>	$variation['variation_is_active'],
+		      'is_purchasable'					=>	$variation['is_purchasable'],
+		      'display_price'						=>	$variation['display_price'],
+		      'display_regular_price'		=>	$variation['display_regular_price'],
+		      'attributes'							=>	json_encode($variation['attributes']),
+		      'image_src'								=>	$variation['image_src'],
+		      'image_link'							=>	$variation['image_link'],
+		      'image_title'							=>	$variation['image_title'],
+		      'image_alt'								=>	$variation['image_alt'],
+		      'image_caption'						=>	$variation['image_caption'],
+		      'image_srcset'						=>	$variation['image_srcset'],
+		      'image_sizes'							=>	$variation['image_sizes'],
+		      'price_html'							=>	$variation['price_html'],
+		      'availability_html'				=>	$variation['availability_html'],
+		      'sku'											=>	$variation['sku'],
+		      'weight'									=>	$variation['weight'],
+		      'dimensions'							=>	$variation['dimensions'],
+		      'min_qty'									=>	$variation['min_qty'],
+		      'max_qty'									=>	$variation['max_qty'],
+		      'backorders_allowed'			=>	$variation['backorders_allowed'],
+		      'is_in_stock'							=>	$variation['is_in_stock'],
+		      'is_downloadable'					=>	$variation['is_downloadable'],
+		      'is_virtual'							=>	$variation['is_virtual'],
+		      'is_sold_individually'		=>	$variation['is_sold_individually'],
+		      'variation_description'		=>	$variation['variation_description']
+				);
+
+			}
+
+		endwhile;
+
+		$this->dvphpexcel->createSheet(6);
+		$this->dvphpexcel->setActiveSheetIndex(6);
+		$this->dvphpexcel->getActiveSheet()->setTitle("variations");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
 
 
 	/**
