@@ -29,14 +29,14 @@ define( 'WPWEI_TD', 'dv-woocommerce-export-import' );
 if( !class_exists('PHPExcel') )
 	require_once( WPWEI_ROOT_PATH. "phpexcel/PHPExcel.php" );
 
-require_once( WPWEI_ROOT_PATH. "lib/class-dvwei.php" );
+require_once( WPWEI_ROOT_PATH. "lib/class-dvwei-export.php" );
 require_once( WPWEI_ROOT_PATH. "admin-panel.php" );
 
 function dvwei_export_products(){
 
 	if( $_GET['dvwooei_action'] == 'export'  ){
 
-		$export		=	new DVWEI;
+		$export		=	new DVWEI_Export;
 		$export->clean_export();
 
 	}

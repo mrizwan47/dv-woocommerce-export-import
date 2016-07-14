@@ -1,8 +1,8 @@
 <?php
 /**
- * DV Woocommerce Export/Import Class
+ * DV Woocommerce Export Class
  *
- * Class to handle export and import of woocommerce data
+ * Class to handle export of woocommerce data
  *
  * @author      Rizwan <rizwan@designsvalley.com>
  * @package     DVWoocommerceExportImport
@@ -12,7 +12,7 @@
  * @TODO				some commenting and make class more extensible
  */
 
-class DVWEI{
+class DVWEI_Export{
 
 	/**
 	 * WP Query object
@@ -52,7 +52,7 @@ class DVWEI{
 		$this->prepare_attributes();
 		$this->prepare_variations();
 
-		// TODO Keep adding additional *prepare* functions for more sheets
+		// TODO Keep adding additional *prepare* functions for more sheets/data
 		$this->save_excel();
 
 	}
