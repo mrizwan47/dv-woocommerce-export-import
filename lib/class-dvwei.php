@@ -49,6 +49,7 @@ class DVWEI{
 		$this->prepare_tags_data();
 		$this->prepare_pa_tax();
 		$this->prepare_pa_terms();
+		$this->prepare_attributes();
 
 		// TODO Keep adding additional *prepare* functions for more sheets
 		$this->save_excel();
@@ -337,6 +338,60 @@ class DVWEI{
 		$this->dvphpexcel->createSheet(4);
 		$this->dvphpexcel->setActiveSheetIndex(4);
 		$this->dvphpexcel->getActiveSheet()->setTitle("attributes_terms");
+		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
+		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
+
+	}
+
+	/**
+	 * Prepare Attributes
+	 */
+	function prepare_attributes(){
+
+		$pa_taxes		= wc_get_attribute_taxonomies();
+
+		$data	=	array();
+
+		// Headers
+		$data[]		=	array(
+			'product_id',
+			'taxonomy',
+			'term_id'
+		);
+
+		while ( $this->WPQ_Object->have_posts() ) : $this->WPQ_Object->the_post();
+
+			global $product;
+
+			if( !$product->is_type( 'variable' ) )
+				continue;
+
+			foreach( $pa_taxes as $pa_tax ){
+
+				$taxonomy_name		=	'pa_'.$pa_tax->attribute_name;
+				$product_terms		= wp_get_object_terms( $product->id,  $taxonomy_name );
+
+				if ( ! empty( $product_terms ) && ! is_wp_error( $product_terms ) ) {
+
+					foreach( $product_terms as $term ) {
+
+						$data[]		=	array(
+							'product_id'	=>	$product->id,
+							'taxonomy'		=>	$taxonomy_name,
+							'term_id'			=>	$term->term_id
+						);
+
+					}
+
+				}
+
+			}
+
+		endwhile;
+
+		$this->dvphpexcel->createSheet(5);
+		$this->dvphpexcel->setActiveSheetIndex(5);
+		$this->dvphpexcel->getActiveSheet()->setTitle("terms_relation");
 		$this->dvphpexcel->getActiveSheet()->freezePane('A2');
 		$this->dvphpexcel->getActiveSheet()->fromArray($data, null, 'A1');
 
