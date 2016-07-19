@@ -207,8 +207,8 @@ class DVWEI_Export{
 				'slug'					=> $cat->slug,
 				'parent_id'			=> $cat->parent,
 				'description'		=> $cat->description,
-				'display_type'	=> get_term_meta('display_type', $cat->term_id, true),
-				'thumbnail'			=> wp_get_attachment_url( get_term_meta('thumbnail_id', $cat->term_id, true) )
+				'display_type'	=> get_term_meta($cat->term_id, 'display_type', true)."sss",
+				'thumbnail'			=> wp_get_attachment_url( get_term_meta($cat->term_id, 'thumbnail_id', true) )
 			);
 
 		}
